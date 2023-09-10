@@ -1,5 +1,6 @@
 package adilet.entity;
 
+import adilet.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,8 @@ public class Instructor {
     @Column(name = "phone_number")
     private String phoneNumber;
     private String specialization;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @ManyToMany(cascade = {
             CascadeType.MERGE,
             CascadeType.PERSIST,

@@ -5,10 +5,13 @@ import adilet.dto.request.CompanyRequest;
 import adilet.dto.response.CompanyResponse;
 import adilet.dto.response.CompanyResponseAllInfo;
 import adilet.entity.Company;
+import adilet.exception.AlreadyExistException;
+import adilet.exception.NotFoundException;
 import adilet.repository.CompanyRepository;
 import adilet.service.CompanyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
 
@@ -35,7 +39,8 @@ public class CompanyServiceImpl implements CompanyService {
 
 
         if (companyRepository.existsByName(companyRequest.getName())) {
-            throw new DuplicateKeyException("Company with name " + companyRequest.getName() + " already exists");
+
+            throw new AlreadyExistException("Company with name " + companyRequest.getName() + " already exists");
         }
 
 
@@ -44,6 +49,7 @@ public class CompanyServiceImpl implements CompanyService {
         company.setAddress(companyRequest.getAddress());
         company.setPhoneNumber(companyRequest.getPhoneNumber());
 
+        log.info("Company successfully saved");
         companyRepository.save(company);
         return new CompanyResponse(
                 company.getId(),
@@ -56,34 +62,41 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyResponse findById(Long companyId) {
-        return companyRepository.findCompanyById(companyId).orElseThrow(
-                () -> new NoSuchElementException("Company with id: " + companyId + " not found")
-        );
+        return companyRepository.findCompanyById(companyId)
+                .orElseThrow(() -> {
+                    log.error("Company with id: " + companyId + " not found");
+                    return new NotFoundException("Company with id: " + companyId + " not found");
+                });
     }
 
     @Override
     public SimpleResponse update(Long companyId, CompanyRequest companyRequest) {
-        Company company = companyRepository.findById(companyId).orElseThrow(
-                () -> new NoSuchElementException("Company with id: " + companyId + " not found")
-        );
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> {
+                    log.error("Company with id: " + companyId + " not found");
+                    return new NotFoundException("Company with id: " + companyId + " not found");
+                });
         company.setName(companyRequest.getName());
         company.setCountry(companyRequest.getCountry());
         company.setAddress(companyRequest.getAddress());
         company.setPhoneNumber(companyRequest.getPhoneNumber());
 
+        log.info("Company successfully updated");
         companyRepository.save(company);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message("Success update")
+                .message("Successfully update")
                 .build();
     }
 
     @Override
     public SimpleResponse delete(Long companyId) {
         companyRepository.deleteById(companyId);
+
+        log.info("Company successfully deleted!");
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message("Successfully delete!")
+                .message("Successfully deleted!")
                 .build();
     }
 
@@ -100,7 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyResponseAllInfo.setGroupName(groupName);
         companyResponseAllInfo.setInstructorName(instructorName);
         companyResponseAllInfo.setSumStudent(sumStudent);
-
+        log.info("Company info successfully received");
         return new CompanyResponseAllInfo(
                 companyResponseAllInfo.getId(),
                 companyResponseAllInfo.getName(),

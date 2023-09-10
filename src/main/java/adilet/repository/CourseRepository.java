@@ -21,8 +21,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             " from Course c where c.company.id = :comId and c.id = :courseId")
     Optional<CourseResponse> findByIdWithCompanyId(Long comId, Long courseId);
 
-    @Query("SELECT c FROM Course c WHERE c.company.id = :id " +
-            "ORDER BY c.dateOfStart")
+    @Query("SELECT new adilet.dto.response.CourseResponse(c.id, c.courseName, c.dateOfStart,c.description)" +
+            " FROM Course c WHERE c.company.id = :id ORDER BY c.dateOfStart")
     List<CourseResponse> sortCoursesByDate(@Param("id") Long id);
 
 }

@@ -1,5 +1,6 @@
 package adilet.entity;
 
+import adilet.enums.Role;
 import adilet.enums.StudyFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,9 @@ public class Student {
     private String phoneNumber;
     private String email;
     private StudyFormat studyFormat;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    private Boolean isBlocked;
     @ManyToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,

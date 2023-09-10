@@ -10,5 +10,12 @@ spring:
       ddl-auto: validate
     show-sql: true
 
+
+  jwt:
+    secret_key : java-10
+
 server:
   port: 8484
+
+
+

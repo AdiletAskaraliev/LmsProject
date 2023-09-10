@@ -3,6 +3,7 @@ package adilet.service;
 import adilet.dto.SimpleResponse;
 import adilet.dto.request.StudentRequest;
 import adilet.dto.response.StudentResponse;
+import adilet.enums.StudyFormat;
 
 import java.util.List;
 
@@ -18,4 +19,10 @@ public interface StudentService {
     SimpleResponse update(StudentRequest studentRequest, Long studId);
 
     SimpleResponse delete(Long studId);
+
+    List<StudentResponse> filterStudentByStudyFormat(Long comId, StudyFormat studyFormat);
+
+    SimpleResponse blockStudent(Long studentId, Boolean isBlocked);
+
+    SimpleResponse unBlockStudent(Long studentId, Boolean anBlocked);
 }
