@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+
 
 @Service
 @Transactional
@@ -33,7 +33,7 @@ public class LessonServiceImpl implements LessonService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> {
                     log.error("Course with id: " + courseId + " not found");
-                    return new NotFoundException("Course with id: " + courseId + " not found")
+                    return new NotFoundException("Course with id: " + courseId + " not found");
                 });
         Lesson lesson = new Lesson();
         lesson.setCourse(course);
